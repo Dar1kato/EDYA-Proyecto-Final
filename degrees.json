@@ -1,0 +1,9 @@
+{
+    "IBERO": ["ING.", "HUM.", "CISAL.", "DIS.", "NEG.", "CISOS."],
+    "ING.": ["MEC.", "AUTO.", "QUIM.", "ELEC.", "SIS.", "BIO.", "CIV.", "INGNEG.", "LOG.", "FIS.", "IND.", "MECAIND.", "MECA."],
+    "HUM.": ["COM.", "EDU.", "LIT."],
+    "CISAL.": ["NUT.", "PSIC."],
+    "DIS.": ["ARQ.", "ART.", "ANIM.", "DINF.", "DGRA.", "DIND.", "DTEX."],
+    "NEG.": ["ADMI.", "TUR.", "COMER.", "CONT.", "RRHH", "LEIN", "MERCA.", "NEGIN."],
+    "CISOS.": ["AMB.", "POL.", "DER.", "ECO.", "RRII"]
+}

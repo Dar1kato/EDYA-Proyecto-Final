@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Visualización de Grafos</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/index.css') }}">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Columna izquierda con formularios y scrollable -->
+            <div class="col-md-5 forms-container">
+                <div class="title_text">
+                    <h1 class="text-center page-title">PROYECTO FINAL - Estructuras de Datos y Algoritmos</h1>
+                </div>
+                
+                <!-- Formulario para añadir estudiantes -->
+                <div class="card">
+                    <div class="card-header text-center py-3">
+                        <h3 class="mb-0">Añadir un estudiante</h3>
+                    </div>
+                    <div class="card-body">
+                        <form action="/add_student" method="post">
+                            <div class="mb-3">
+                                <label for="student1" class="form-label">Nombre del Alumno:</label>
+                                <input type="text" class="form-control" id="student1" name="student" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="degree" class="form-label">Carrera:</label>
+                                <select class="form-select" id="degree" name="degree" required>
+                                    <option selected value="">...</option>
+                                    <option value="MEC.">Ing. Mecatrónica</option>
+                                    <option value="AUTO.">Ing. Automotríz</option>
+                                    <option value="QUIM.">Ing. Química</option>
+                                    <option value="ELEC.">Ing. Eléctrica</option>
+                                    <option value="SIS.">Ing. en Sistemas</option>
+                                    <option value="BIO.">Ing. Biomédica</option>
+                                    <option value="CIV.">Ing. Civil</option>
+                                    <option value="INGNEG.">Ing. en Negocios</option>
+                                    <option value="LOG.">Ing. Logística</option>
+                                    <option value="FIS.">Ing. Física</option>
+                                    <option value="IND.">Ing. Industrial</option>
+                                    <option value="MECAIND.">Ing. Mecánica Industrial</option>
+                                    <option value="MECA.">Ing. Mecánica</option>
+                                    <option value="COM.">Lic. en Comunicación</option>
+                                    <option value="EDU.">Lic. en Educación</option>
+                                    <option value="LIT.">Lic. en Literatura</option>
+                                    <option value="NUT.">Lic. en Nutrición</option>
+                                    <option value="PSIC.">Lic. en Psicología</option>
+                                    <option value="ARQ.">Lic. en Arquitectura</option>
+                                    <option value="ART.">Lic. en Artes</option>
+                                    <option value="ANIM.">Lic. en Animación</option>
+                                    <option value="DINF.">Lic. en Diseño de Información</option>
+                                    <option value="DGRA.">Lic. en Diseño Grafico</option>
+                                    <option value="DIND.">Lic. en Diseño Industrial</option>
+                                    <option value="DTEX.">Lic. en Diseño Textil</option>
+                                    <option value="ADMI.">Lic. en Administración</option>
+                                    <option value="TUR.">Lic. en Turismo</option>
+                                    <option value="COMER.">Lic. en Comercio</option>
+                                    <option value="CONT.">Lic. en Contaduría</option>
+                                    <option value="RRHH">Lic. en Recursos Humanos</option>
+                                    <option value="LEIN">Lic. en Emprendimiento Inovador</option>
+                                    <option value="MERCA.">Lic. en Mercadotecnia</option>
+                                    <option value="NEGIN.">Lic. en Negocios Internacionales</option>
+                                    <option value="AMB.">Lic. Ciencias Ambientales</option>
+                                    <option value="POL.">Lic. en Ciencias Politicas</option>
+                                    <option value="DER.">Lic. en Derecho</option>
+                                    <option value="ECO.">Lic. en Economia</option>
+                                    <option value="RRII">Lic. en Relaciones Internacionales</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="semester" class="form-label">Semestre:</label>
+                                <select class="form-select" id="semester" name="semester" required>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                </select>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Enviar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Formulario para añadir habilidades al grafo -->
+                <div class="card">
+                    <div class="card-header text-center py-3">
+                        <h3 class="mb-0">Añadir habilidad a un estudiante</h3>
+                    </div>
+                    <div class="card-body">
+                        <form action="/add_skill" method="post">
+                            <div class="mb-3">
+                                <label for="student2" class="form-label">Nombre del Alumno:</label>
+                                <input type="text" class="form-control" id="student2" name="student" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="skill1" class="form-label">Habilidad:</label>
+                                <input type="text" class="form-control" id="skill1" name="skill" required>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Enviar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Formulario para activar dijkstra -->
+                <div class="card">
+                    <div class="card-header text-center py-3">
+                        <h3 class="mb-0">Encontrar alumnos por habilidad</h3>
+                    </div>
+                    <div class="card-body">
+                        <form action="/search_path" method="post">
+                            <div class="mb-3">
+                                <label for="student3" class="form-label">Nombre del Alumno:</label>
+                                <input type="text" class="form-control" id="student3" name="student" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="skill2" class="form-label">Habilidad:</label>
+                                <input type="text" class="form-control" id="skill2" name="skill" required>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Buscar</button>
+                            </div>
+                        </form>
+                        
+                        <!-- Bloque detector. Se muestra el html si hay un camino encontrado -->
+                        {% if path_result %}
+                        <div class="result-container mt-4 p-3 border rounded bg-light" id="dijsktra_result">
+                            <h4 class="text-primary">Mejor camino encontrado:</h4>
+                            <div class="path p-2 bg-white border rounded">
+                                
+                                <!-- Se itera por los nodos para imprimirlos, seguidos de una flecha -->
+                                {% for node in path_result %}
+                                <span class="fw-bold">{{ node }}</span>
+                                {% if not loop.last %}
+                                <span class="text-muted"> → </span>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                            <p class="mt-3 mb-1">Estudiante con la habilidad: <strong class="text-success">{{ student_found }}</strong></p>
+                            <p class="mb-0">Semestre: <strong class="text-primary">{{ semester }}</strong></p>
+                        </div>
+                        <!-- En caso de errores, se imprime el mensaje del error-->
+                        {% elif error_message %}
+                        <div class="alert alert-danger mt-4">
+                            <p class="mb-0"><i class="bi bi-exclamation-triangle-fill me-2"></i>Error: {{ error_message }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            
+            </div>
+            
+            <!-- Columna derecha con el grafo estático -->
+            <div class="col-md-7 p-0">
+                <div class="graph-container">
+                    <iframe src="/graph" id="graph-frame"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <p>Daniel Peña Cruz - Ing. en Sistemas</p>
+        <p>Ibero Puebla</p>
+    </footer>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Para recargar el iframe después de enviar cualquier formulario
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                setTimeout(function() {
+                    document.getElementById('graph-frame').src = '/graph?_=' + new Date().getTime();
+                }, 500);
+            });
+        });
+    </script>
+</body>
+</html>
