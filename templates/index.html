@@ -14,7 +14,7 @@
             <!-- Columna izquierda con formularios y scrollable -->
             <div class="col-md-5 forms-container">
                 <div class="title_text">
-                    <h1 class="text-center page-title">PROYECTO FINAL - Estructuras de Datos y Algoritmos</h1>
+                    <h1 id="title" class="text-center page-title">PROYECTO FINAL - Estructuras de Datos y Algoritmos</h1>
                 </div>
                 
                 <!-- Formulario para añadir estudiantes -->
@@ -112,8 +112,15 @@
                                 <button type="submit" class="btn btn-primary">Enviar</button>
                             </div>
                         </form>
+                
+                        {% if error_message_skill %}
+                            <div id="skill_alert" class="alert alert-danger mt-4">
+                                <p class="mb-0"><i class="bi bi-exclamation-triangle-fill me-2"></i>Error: {{ error_message_skill }}</p>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
+                
                 
                 <!-- Formulario para activar dijkstra -->
                 <div class="card">
