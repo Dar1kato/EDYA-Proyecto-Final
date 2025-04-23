@@ -110,7 +110,7 @@ class Graph:
     #-----------------------------------------------------------------------------            
         
     #* Método para añadir un estudiante a la matriz de adyacencia
-    def add_student_vertex(self, student, degree, year) -> None:
+    def add_student_vertex(self, student, degree, semester) -> None:
         try:
             # Se busca el inddice de la carrera en la matriz de adyacencia
             degree_index = next((k for k, v in self.degrees.items() if v == degree), None)
@@ -120,7 +120,6 @@ class Graph:
                 raise ValueError(f'Error: La carrera {degree} no existe.')
             
         except ValueError as e:
-            print(e)
             return
 
         # Asignar índice al estudiante
@@ -130,7 +129,7 @@ class Graph:
         self.students[student_index] = student
         
         # Se guarda el semestre del estudiante
-        self.students_semesters[student_index] = year
+        self.students_semesters[student_index] = semester
           
         # Agregar nodo para el estudiante
         self.add_vertex(1)
@@ -139,7 +138,7 @@ class Graph:
         self.num_nodes += 1
         
         # Conectar el estudiante a su carrera
-        self.add_edge(student_index, degree_index, year)
+        self.add_edge(student_index, degree_index, semester)
         
         return
         
@@ -147,18 +146,14 @@ class Graph:
         
     #* Método para añadir una habilidad a la matriz de adyacencia
     def add_skill_vertex(self, student, skill) -> None:  
-         
-        try:
-            # Si se encuentra el estudiante el el array de estudiantes, se obtiene el index del estudiante
-            if student in self.students.values():
-                student_index = next((k for k, v in self.students.items() if v == student), None)
-                
-            # De lo contrario, se retorna un error
-            else:
-                raise ValueError(f'Error: El estudiante {student} no existe.')
-        except ValueError as e:
-            print(e)
-            return
+        
+        # Si se encuentra el estudiante el el array de estudiantes, se obtiene el index del estudiante
+        if student in self.students.values():
+            student_index = next((k for k, v in self.students.items() if v == student), None)
+
+        # De lo contrario, se retorna un error
+        else:
+            raise ValueError(f'Error: El estudiante {student} no existe.')
         
         # Se obtiene un idex para la habilidad
         skill_index = next((k for k, v in self.skills.items() if v == skill), None)
@@ -328,7 +323,8 @@ class Graph:
         
         # Se encuentra el indice del estudiante encontrado
         if objective_student in self.students.values():
-                student_index = next((k for k, v in self.students.items() if v == student_name), None)
+            student_index = next((k for k, v in self.students.items() if v == objective_student), None)
+
             
         # Se encuenetra el semestre del estudiante encontrado    
         objective_semester = self.students_semesters[student_index]
@@ -383,9 +379,9 @@ while run:
     if option == '1':
         student = input('Ingrese el nombre del estudiante: ')
         degree = input('Ingrese la carrera del estudiante: ')
-        year = input('Ingresa el semestre del estudiante: ')
+     semester = input('Ingresa el semestre del estudiante: ')
       
-        graph.add_student_vertex(student, degree, year)
+        graph.add_student_vertex(student, degree, semester)
         
     elif option == '2':
         graph.getGraph()
