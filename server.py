@@ -42,23 +42,26 @@ def add_student():
 
 #-----------------------------------------------------------------------------------
 
-#* Ruta para añadir habilidades al grafo
 @app.route('/add_skill', methods=['GET', 'POST'])
 def add_skill():
-    
-    # Se detecta una llamada tipo POST al enviar el formulario para añadir habilidades
+    error_message_skill = None
+
     if request.method == "POST":
-        
-        # Se registran los datos (Nombre y habilidad)
-        st = request.form["student"]
-        sk = request.form["skill"]
+        try:
+            st = request.form["student"]
+            sk = request.form["skill"]
 
-        # Se llama la función para añadir nodos de alumno, de la clase "Graph"
-        graph.add_skill_vertex(st, sk)
+            graph.add_skill_vertex(st, sk)
 
+        except ValueError as e:
+            error_message_skill = str(e)
 
-        return redirect(url_for('index'))
+        return render_template('index.html',
+                                error_message_skill=error_message_skill)
+    
     return render_template('index.html')
+
+
 
 #-----------------------------------------------------------------------------------
 
@@ -110,6 +113,18 @@ def show_graph():
 
 #-----------------------------------------------------------------------------------
 
+@app.route('/prim', methods=['GET'])
+def show_prim():
+    
+    fig = graph.getMST()  # Llamamos al método que aplica el algoritmo de Prim
+    
+    graph_html = fig.to_html(full_html=False, include_plotlyjs='cdn')  # Convertimos el gráfico a HTML
+    
+    return render_template("graph.html", graph_html=graph_html)
+
+#-----------------------------------------------------------------------------------
+
+
 #* Inicio del servidor
 if __name__ == "__main__":
-    app.run(debug=True, port=8000)
+    app.run(debug=True, port=8080)
