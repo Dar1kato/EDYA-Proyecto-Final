@@ -167,7 +167,19 @@
                         {% endif %}
                     </div>
                 </div>
-            
+
+                <div class="card">
+                    <div class="card-header text-center py-3">
+                        <h3 class="mb-0">Encontrar Árbol de Expansión Mínima</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="prim-form" action="/prim" method="get">
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Mostrar MST</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
             
             <!-- Columna derecha con el grafo estático -->
@@ -188,11 +200,18 @@
     <script>
         // Para recargar el iframe después de enviar cualquier formulario
         document.querySelectorAll('form').forEach(form => {
-            form.addEventListener('submit', function(e) {
-                setTimeout(function() {
-                    document.getElementById('graph-frame').src = '/graph?_=' + new Date().getTime();
-                }, 500);
-            });
+            if (form.id === 'prim-form') {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault(); // Previene el envío normal del formulario
+                    document.getElementById('graph-frame').src = '/prim?_=' + new Date().getTime();
+                });
+            } else {
+                form.addEventListener('submit', function(e) {
+                    setTimeout(function() {
+                        document.getElementById('graph-frame').src = '/graph?_=' + new Date().getTime();
+                    }, 500);
+                });
+            }
         });
     </script>
 </body>
