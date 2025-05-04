@@ -2,6 +2,9 @@ import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
 import json
+import time
+import os
+import plotly.graph_objects as go
 
 
 class Graph:
@@ -13,6 +16,9 @@ class Graph:
         self.skills = {}                                            # Diccionario para guardar las habilidades
         self.num_nodes = len(self.categories) + len(self.degrees)   # Nodos iniciales
         self.students_semesters = {}                                # Diccionario para guardar los semetres
+        self.students_skills = {}
+        self.students_degrees = {}
+        self.mst_student_list = []                                  # Lista de estudiantes para el algoritmo de Prim
     
     
     # Método para cargar las carreras desde degrees.json
@@ -68,6 +74,8 @@ class Graph:
         
         # Se guarda el semestre del estudiante
         self.students_semesters[student_index] = year
+        
+        self.students_degrees[student_index] = degree
           
         # Agregar nodo para el estudiante
         self.add_vertex(1)
@@ -109,6 +117,10 @@ class Graph:
         
         # Conectar el estudiante con la habilidad
         self.add_edge(student_index, skill_index)
+        
+        
+        self.students_skills[student_index] = skill
+        
         
         
     # Método para añadir una conexión entre dos nodos
@@ -181,6 +193,118 @@ class Graph:
         plt.title('Grafo de estudiantes y carreras')
         plt.tight_layout()
         plt.show()
+        
+ 
+    def coincidence(self, a, b) -> int:
+        print(f"Calculando coincidencias entre alumnos {self.students[a]} y {self.students[b]}")
+      
+        student_A_skills = [self.students_skills[a] if a in self.students_skills else []]
+        print(f"Estudiante A: {self.students[a]} con habilidades {student_A_skills}")
+        
+        student_B_skills = [self.students_skills[b] if b in self.students_skills else []]
+        print(f"Estudiante B: {self.students[b]} con habilidades {student_B_skills}")
+        
+        shared_list = list(set(student_A_skills) & set (student_B_skills))
+        print(f"Lista de habilidades en comun: {shared_list}")
+        
+        shared_skills = len(shared_list) * 2
+        print(f"Puntos de habilidades en comun: {shared_skills}")
+        
+        added_points = 0
+        
+        if self.students_degrees[a] == self.students_degrees[b]:
+            print("Carrera en comun detectada")
+            added_points += 5
+            
+        if self.students_semesters[a] == self.students_semesters[b]:
+            print("Semestre en comun detectado")
+            added_points += 1
+            
+        print(f"Coincidencia encontrada: {(shared_skills + added_points)}")
+    
+        return (shared_skills + added_points)
+    
+    #? Portado
+    def weight(self, a, b) -> int:
+        print(f"Calculando pesos entre alumnos {self.students[a]} y {self.students[b]}...")
+        coincidence = (1 / (self.coincidence(a, b) + 0.1))
+        
+        print(f"Peso Calculado entre {self.students[a]} y {self.students[b]}: {coincidence}\n")
+        #time.sleep(0.2)
+        return format(coincidence, '.2f')
+        
+
+    #? Portado
+    def correlation_matrix(self):
+        print("Creando matriz de correlación")
+        time.sleep(1)
+        mst_student_list = list(self.students.keys())
+
+        print(f"Estudiantes Obtenidos: {mst_student_list}")
+        time.sleep(1)
+        students_quantity = len(mst_student_list)
+
+        matrix = np.zeros((students_quantity, students_quantity), dtype=float)
+
+        index_map = {student_id: index for index, student_id in enumerate(mst_student_list)}
+
+        for i in mst_student_list:
+            for j in mst_student_list:
+                if i == j:
+                    matrix[index_map[i]][index_map[j]] = 0
+                else: 
+                    calculated_weight = self.weight(i, j)
+                    matrix[index_map[i]][index_map[j]] = calculated_weight
+                    matrix[index_map[j]][index_map[i]] = calculated_weight  # <- asegúrate de esto también
+
+        print("Matriz creada con exito\n")
+        
+        self.mst_student_list = mst_student_list
+        
+        time.sleep(1)
+        return matrix
+    
+                    
+    def getMST(self):
+        print("Generando Árbol de Expansión Mínima\n")
+
+        matrix = self.correlation_matrix()
+        print("Matriz generada:")
+        print(matrix)
+
+        # Crear grafo y asignar pesos explícitamente
+        G1 = nx.Graph()
+        num_nodes = matrix.shape[0]
+        for i in range(num_nodes):
+            for j in range(i + 1, num_nodes):  # Solo la mitad superior (grafo no dirigido)
+                weight = matrix[i][j]
+                if weight > 0:  # Puedes omitir si hay ceros innecesarios
+                    G1.add_edge(i, j, weight=weight)
+        
+        # Obtener el Árbol de Expansión Mínima
+        MST = nx.minimum_spanning_tree(G1, weight='weight', algorithm='prim')
+        
+        
+        # Se renombran los nodos utilizando los diccionarios de categorías, carreras, estudiantes y habilidades
+        relabel_dict = {i: self.students[self.mst_student_list[i]] for i in range(len(self.mst_student_list))}
+        MST = nx.relabel_nodes(MST, relabel_dict)
+
+
+        # Posiciones para dibujar
+        pos = nx.spring_layout(MST)
+
+        # Dibujar el árbol dirigido
+        plt.figure(figsize=(10, 8))
+        nx.draw(MST, pos, with_labels=True, font_size=12, node_size=1000, edge_color='grey', arrows=True, node_color='lightblue')
+
+        # Etiquetas de peso desde el MST original
+        edge_labels = nx.get_edge_attributes(MST, 'weight')
+        nx.draw_networkx_edge_labels(MST, pos, edge_labels=edge_labels, font_size=10)
+
+        plt.title('Árbol de Expansión Mínima entre Estudiantes (Enraizado)')
+        plt.tight_layout()
+        plt.show()
+
 
 
     # Algortimo de Dijkstra
@@ -270,7 +394,10 @@ while run:
     print('2. Mostrar grafo')
     print('3. Añadir habilidad')
     print('4. Dijkstra')
-    print('5. Salir')
+    print('5. Prim')
+    print('6. Imprimir diccionarios')
+    print('7. Salir')
+    
     
     option = input('Seleccione una opción: ')
     
@@ -281,13 +408,26 @@ while run:
       
         graph.add_student_vertex(student, degree, year)
         
+        print(f"Se ha añadido el estudiante {student} de {degree} en {year}° semestre\n")
+        
+        input("Presione Enter para continuar...")
+        os.system('clear')
+        
     elif option == '2':
         graph.getGraph()
+        
+        input("Presione Enter para continuar...")
+        os.system('clear')
         
     elif option == '3':
         student = input('Ingrese el nombre del estudiante: ')
         skill = input('Ingrese el nombre de la habilidad: ')
         graph.add_skill_vertex(student, skill)
+        
+        print(f"Se ha añadido la habilidad {skill} al estudiante {student}\n")
+        
+        input("Presione Enter para continuar...")
+        os.system('clear')
         
     elif option == '4':
         student = input('Ingrese el nombre del estudiante: ')
@@ -301,9 +441,50 @@ while run:
         except ValueError as e:
             print(f"❌ {e}")
     
+        input("Presione Enter para continuar...")
+        os.system('clear')
+        
     elif option == '5':
+        graph.getMST()
+        
+        input("Presione Enter para continuar...")
+        
+    elif option == '6':
+        print(f"ID de Estudiantes: {graph.students}")
+        print(f"Carreras de estudiantes: {graph.students_degrees}")
+        print(f"Semestre de estudiantes: {graph.students_semesters}")
+        print(f"Habilidades de estudiantes: {graph.students_skills}")
+
+        input("Presione Enter para continuar...")   
+
+    
+    elif option == '7':
         run = False
         
+        
+    elif option == '8':
+        graph.add_student_vertex('Daniel', 'SIS.', 2)
+        graph.add_student_vertex('Karol', 'ANIM.', 4)
+        graph.add_student_vertex('Mariana', 'ANIM.', 5)
+        graph.add_student_vertex('Julie', 'AUTO.', 3)
+        graph.add_student_vertex('Emanuel', 'SIS.', 2)
+        graph.add_student_vertex('Arath', 'COM.', 4)
+        graph.add_student_vertex('Jorge', 'DER.', 8)
+        graph.add_student_vertex('Javier', 'COM.', 2)
+        
+        graph.add_skill_vertex('Daniel', 'Programar')
+        graph.add_skill_vertex('Karol', 'Dibujar')
+        graph.add_skill_vertex('Mariana', 'Dibujar')
+        graph.add_skill_vertex('Julie', 'Programar')
+        graph.add_skill_vertex('Emanuel', 'Programar')
+        graph.add_skill_vertex('Arath', 'Escribir')
+        graph.add_skill_vertex('Jorge', 'Escribir')
+        graph.add_skill_vertex('Javier', 'Dibujar')
+        
+        print(f"Modo DEBUG activado")
+        
+        input("Presione Enter para continuar...")
+        os.system('clear')
     else:
         print('Opción no válida. Intente de nuevo.')
 
