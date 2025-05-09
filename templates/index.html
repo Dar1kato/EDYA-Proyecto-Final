@@ -121,14 +121,14 @@
                     </div>
                 </div>
                 
-                
                 <!-- Formulario para activar dijkstra -->
                 <div class="card">
                     <div class="card-header text-center py-3">
                         <h3 class="mb-0">Encontrar alumnos por habilidad</h3>
                     </div>
                     <div class="card-body">
-                        <form action="/search_path" method="post">
+                        <!-- Aqui va el id="path-"-->
+                        <form  id="path-form" action="/dijkstra_test" method="get">
                             <div class="mb-3">
                                 <label for="student3" class="form-label">Nombre del Alumno:</label>
                                 <input type="text" class="form-control" id="student3" name="student" required>
@@ -141,30 +141,6 @@
                                 <button type="submit" class="btn btn-primary">Buscar</button>
                             </div>
                         </form>
-                        
-                        <!-- Bloque detector. Se muestra el html si hay un camino encontrado -->
-                        {% if path_result %}
-                        <div class="result-container mt-4 p-3 border rounded bg-light" id="dijsktra_result">
-                            <h4 class="text-primary">Mejor camino encontrado:</h4>
-                            <div class="path p-2 bg-white border rounded">
-                                
-                                <!-- Se itera por los nodos para imprimirlos, seguidos de una flecha -->
-                                {% for node in path_result %}
-                                <span class="fw-bold">{{ node }}</span>
-                                {% if not loop.last %}
-                                <span class="text-muted"> → </span>
-                                {% endif %}
-                                {% endfor %}
-                            </div>
-                            <p class="mt-3 mb-1">Estudiante con la habilidad: <strong class="text-success">{{ student_found }}</strong></p>
-                            <p class="mb-0">Semestre: <strong class="text-primary">{{ semester }}</strong></p>
-                        </div>
-                        <!-- En caso de errores, se imprime el mensaje del error-->
-                        {% elif error_message %}
-                        <div class="alert alert-danger mt-4">
-                            <p class="mb-0"><i class="bi bi-exclamation-triangle-fill me-2"></i>Error: {{ error_message }}</p>
-                        </div>
-                        {% endif %}
                     </div>
                 </div>
 
@@ -205,11 +181,20 @@
                     e.preventDefault(); // Previene el envío normal del formulario
                     document.getElementById('graph-frame').src = '/prim?_=' + new Date().getTime();
                 });
-            } else {
+            } else if (form.id === 'path-form') {
                 form.addEventListener('submit', function(e) {
-                    setTimeout(function() {
-                        document.getElementById('graph-frame').src = '/graph?_=' + new Date().getTime();
-                    }, 500);
+                    e.preventDefault(); // Previene el envío normal del formulario
+        
+                    // Obtener los datos del formulario
+                    const formData = new FormData(form);
+                    const params = new URLSearchParams(formData);
+        
+                    // Actualizar el iframe con los datos enviados al backend
+                    document.getElementById('graph-frame').src = '/dijkstra_test?' + params.toString();
+                });
+            } else {
+                form.addEventListener('submit', function() {
+                    document.getElementById('graph-frame').src = '/graph?_=' + new Date().getTime();
                 });
             }
         });
